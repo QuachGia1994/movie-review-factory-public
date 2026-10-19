@@ -26,6 +26,7 @@ All notable changes to Movie Review Factory are documented here.
 - Clean-machine release gate `scripts/release_gate.py` with a 13-step checklist (fixture → ingest → transcript → scenes → search → content → tts → alignment → render → qa → export), offline mode, standalone no-repo-src mode, and a shipped VAD-visible speech fixture `data/raw/mrf-gate-speech.mp4` (the bundled sample's music bed scores zero under Silero VAD); `scripts/bench_ann.py` measures search latency for the ANN decision.
 
 ### Changed
+- Exclude local runtime/model caches, agent/Postman session data, logs, and generated diagnostics from Git.
 - The dashboard now shows the next action after import, draft script, render, or QA; script and metadata fields reload when pipeline artifacts first appear.
 - Thumbnail generation now honors the job aspect ratio (1280x720 for 16:9, 720x1280 for 9:16).
 - Claude content-agent invocation passes tools through a single `--tools` flag (empty for non-research stages) instead of the removed `--allowed-tools` duplicate.
@@ -36,6 +37,7 @@ All notable changes to Movie Review Factory are documented here.
 - AGY pool scheduler v2 (`pool_scheduler.py`): bounded retries with backoff (`MRF_AGY_RETRIES`, 0-3), a 300s role cooldown (`MRF_AGY_COOLDOWN_SECONDS`) that skips only the cooled-down role, partial resume via `ScheduleResult`, and per-role quota/health telemetry (status, latency_ms, cooldown_until) written to `%LOCALAPPDATA%\MovieReviewFactory\runtime\pool_health.json`. AGY prompts fit the measured ~26,000-char backend limit (`MRF_AGY_PROMPT_MAX`) with tiered scene/candidate context instead of failing the request.
 
 ### Fixed
+- Offline publish and render tests isolate optional speech providers so installed Edge-TTS/Whisper packages cannot trigger live requests or model downloads.
 - The transcript stage now skips with `source video has no audio track - nothing to transcribe` when the source container has no audio stream, instead of failing inside faster-whisper/PyAV with `tuple index out of range`.
 - Claude content-agent failures surface a bounded `head…tail` diagnostic (≤400 chars, no full stdout flood) and transient HTTP 429/5xx advisor errors are retried with `5×(attempt+1)` backoff instead of failing the stage on the first hiccup.
 

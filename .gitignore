@@ -15,6 +15,20 @@ data/raw/*
 *.mov
 *.avi
 
+# Local runtime, session state, and generated diagnostics
+.runtime-cache/
+.agents/
+.postman/
+postman/globals/
+*.log
+$null
+.handle-before.txt
+.task-existing-diff.txt
+*_tmp.py
+full_suite.txt
+clip_thumb.jpg
+clipboard_image.png
+
 # Ship release-gate fixtures (sample videos ignored above by *.mp4)
 !data/raw/mrf-gate-speech.mp4
 !data/raw/ultracode-smoke-sample.mp4

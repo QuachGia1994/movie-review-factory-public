@@ -8,6 +8,7 @@ import importlib
 import io
 import json
 import os
+import sys
 import threading
 import time
 import urllib.error
@@ -216,7 +217,8 @@ def test_publish_gate_requires_confirm(tmp_path: Path) -> None:
     assert not (tmp_path / "demo" / "publish_record.json").exists()
 
 
-def test_publish_blocked_until_approved_then_succeeds(tmp_path: Path) -> None:
+def test_publish_blocked_until_approved_then_succeeds(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setitem(sys.modules, "edge_tts", None)
     svc = JobsService(tmp_path)
     root = _job_with_metadata(tmp_path, "demo")
 
@@ -250,7 +252,8 @@ def test_update_metadata_clears_approval(tmp_path: Path) -> None:
     assert svc.get_metadata("demo")["metadata"]["title"] == "Tiêu đề mới"
 
 
-def test_metadata_edit_invalidates_ready_publish(tmp_path: Path) -> None:
+def test_metadata_edit_invalidates_ready_publish(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setitem(sys.modules, "edge_tts", None)
     svc = JobsService(tmp_path)
     root = _job_with_metadata(tmp_path, "demo")
     svc.approve_script("demo")

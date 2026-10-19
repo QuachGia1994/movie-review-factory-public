@@ -94,7 +94,8 @@ def test_publish_blocked_without_approvals(job_dir: Path) -> None:
     assert "blocked" in pub["message"]
 
 
-def test_publish_ready_after_approvals(job_dir: Path) -> None:
+def test_publish_ready_after_approvals(job_dir: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setitem(sys.modules, "edge_tts", None)
     run_job(job_dir)
 
     # Manually approve script
@@ -132,7 +133,8 @@ def test_publish_ready_after_approvals(job_dir: Path) -> None:
     assert record["publish_ready"] is True
 
 
-def test_job_is_complete_after_full_run_with_approvals(job_dir: Path) -> None:
+def test_job_is_complete_after_full_run_with_approvals(job_dir: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setitem(sys.modules, "edge_tts", None)
     run_job(job_dir)
 
     for fname in ("script.json", "youtube_metadata.json"):

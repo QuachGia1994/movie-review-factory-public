@@ -16,6 +16,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -78,7 +79,9 @@ def _approve(job_dir: Path, filename: str) -> None:
 
 
 @pytest.mark.skipif(not SAMPLE_VIDEO.exists(), reason=f"sample video missing: {SAMPLE_VIDEO}")
-def test_end_to_end_real_render_then_publish_gate(tmp_path: Path) -> None:
+def test_end_to_end_real_render_then_publish_gate(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setitem(sys.modules, "edge_tts", None)
+    monkeypatch.setitem(sys.modules, "faster_whisper", None)
     cfg = JobConfig(
         job_id="e2e-smoke",
         language="vi",
